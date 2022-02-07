@@ -1,8 +1,8 @@
 require("@nomiclabs/hardhat-waffle");
+require("@nomiclabs/hardhat-web3");
 
-
-const fs = require("fs")
-const privateKey = fs.readFileSync(".secret").toString()
+require('dotenv').config()
+const privateKey = process.env.SECRET_KEY
 
 module.exports = {
   networks: {

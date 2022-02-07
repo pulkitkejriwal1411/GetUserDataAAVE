@@ -1,11 +1,7 @@
-var Web3 = require("web3")
-
-var fs = require('fs')
-const privateKey = fs.readFileSync(".secret").toString()
+require('dotenv').config()
+const privateKey = process.env.SECRET_KEY
 
 const AlchemyLink = 'https://polygon-mumbai.g.alchemy.com/v2/'+privateKey;
-
-var web3 = new Web3(new Web3.providers.HttpProvider(AlchemyLink));
 
 
 const LendingPoolAbi = require('../LendingPoolABI.json');
@@ -18,7 +14,7 @@ const userAddress = '0x51571107Cb5c25b3Ef36B714CBAd17F6F900B936';
 
 
 
-const GetUserDetalis= async()=>{
+async function GetUserDetails(){
     let userData = await LendingPoolcontract.methods.getUserAccountData(userAddress).call(function(err,res){
 
     });
@@ -26,5 +22,5 @@ const GetUserDetalis= async()=>{
     
 }
 
- GetUserDetalis();
+ GetUserDetails();
 
