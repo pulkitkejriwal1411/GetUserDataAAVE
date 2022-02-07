@@ -1,11 +1,14 @@
 var Web3 = require("web3")
 
-const AlchemyLink = 'https://polygon-mumbai.g.alchemy.com/v2/l2PxHlcL39OUs89Gpa78uiegrCxfcDPu';
+var fs = require('fs')
+const privateKey = fs.readFileSync(".secret").toString()
+
+const AlchemyLink = 'https://polygon-mumbai.g.alchemy.com/v2/'+privateKey;
 
 var web3 = new Web3(new Web3.providers.HttpProvider(AlchemyLink));
 
 
-const LendingPoolAbi = require('./LendingPoolABI.json');
+const LendingPoolAbi = require('../LendingPoolABI.json');
 
 const LendingPoolAddress = '0x9198F13B08E299d85E096929fA9781A1E3d5d827';
 
