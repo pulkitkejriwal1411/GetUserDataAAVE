@@ -1,7 +1,6 @@
 require('dotenv').config()
 const privateKey = process.env.SECRET_KEY
 
-const AlchemyLink = 'https://polygon-mumbai.g.alchemy.com/v2/'+privateKey;
 
 
 const LendingPoolAbi = require('../LendingPoolABI.json');
