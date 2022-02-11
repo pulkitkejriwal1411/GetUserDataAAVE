@@ -1,5 +1,5 @@
 const ProtocolDataAddress = "0xFA3bD19110d986c5e5E9DD5F69362d05035D045B";
-const ProtocolDataABI = require("../ProtocolDataABI.json");
+const ProtocolDataABI = require("../ABIs/ProtocolDataABI.json");
 const ProtocolDataContract = new web3.eth.Contract(
   ProtocolDataABI,
   ProtocolDataAddress

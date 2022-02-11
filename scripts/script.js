@@ -1,6 +1,6 @@
 require("dotenv").config();
 const privateKey = process.env.SECRET_KEY;
-const LendingPoolAbi = require("../LendingPoolABI.json");
+const LendingPoolAbi = require("../ABIs/LendingPoolABI.json");
 const LendingPoolAddress = "0x9198F13B08E299d85E096929fA9781A1E3d5d827";
 const LendingPoolcontract = new web3.eth.Contract(
   LendingPoolAbi,
