@@ -45,6 +45,8 @@ async function GetReserveConfigurationDataProtocolDataForUser() {
   totalCollateral = totalCollateral.toString();
   totalCollateral = mod1ex(totalCollateral, 26);
   AllUserAssetData.totalCollateral = totalCollateral + " USD";
+
+
   let totalBorrows = new BN(userData.totalDebtETH);
   totalBorrows = totalBorrows.mul(ETHtoUSD);
   totalBorrows = totalBorrows.toString();
@@ -136,6 +138,7 @@ async function GetReserveConfigurationDataProtocolDataForUser() {
     UserAssetData.maxBorrowLimit = mod1ex(UserAssetData.maxBorrowLimit, 11);
 
     AllUserAssetData.push(UserAssetData);
+    
   }
 
   console.log(AllUserAssetData);
