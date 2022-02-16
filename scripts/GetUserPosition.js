@@ -10,150 +10,43 @@ async function GetUserPosition() {
   let owner;
   [owner] = await ethers.getSigners();
 
-  // creating contract objects
-  const ResolveLendingPool = await ethers.getContractFactory(
-    "ResolveLendingPool"
+  const ResolveUserPosition = await ethers.getContractFactory(
+    "ResolveUserPosition"
   );
-  let resolveLendingPool = await ResolveLendingPool.deploy();
-  const ResolveAggregatorProxy = await ethers.getContractFactory(
-    "ResolveAggregatorProxy"
-  );
-  let resolveAggregatorProxy = await ResolveAggregatorProxy.deploy();
-  const ResolvePriceOracle = await ethers.getContractFactory(
-    "ResolvePriceOracle"
-  );
-  let resolvePriceOracle = await ResolvePriceOracle.deploy();
-  const ResolverProtocolDataProvider = await ethers.getContractFactory(
-    "ResolverProtocolDataProvider"
-  );
-  let resolveProtocolDataProvider = await ResolverProtocolDataProvider.deploy();
+  let resolveUserPosition = await ResolveUserPosition.deploy();
 
-  //object to store the position of the user
-  let UserPosition = [];
-
-  //accessing all tokens
-  const allTokens = await resolveProtocolDataProvider.getAllReservesTokens();
-
-  //ether value in USD
-  let ETHtoUSD = await resolveAggregatorProxy.EthToUSD();
-  ETHtoUSD = ETHtoUSD.toString();
-  ETHtoUSD = new BN(ETHtoUSD);
-
-  //getting user data
-  let userData = await resolveLendingPool.getUserData(userAddress);
-  let AaveUser = [];
-
-  //total collateral usd
-  let totalCollateral = userData.totalCollateralETH;
-  totalCollateral = totalCollateral.toString();
-  totalCollateral = new BN(totalCollateral);
-  totalCollateral = totalCollateral.mul(ETHtoUSD);
-  totalCollateral = totalCollateral.toString();
-  AaveUser.totalCollateral = mod1ex(totalCollateral, 26) + " USD";
-
-  //total borrows
-  let totalBorrows = userData.totalDebtETH;
-  totalBorrows = totalBorrows.toString();
-  totalBorrows = new BN(totalBorrows);
-  totalBorrows = totalBorrows.mul(ETHtoUSD);
-  totalBorrows = totalBorrows.toString();
-  AaveUser.totalBorrows = mod1ex(totalBorrows, 26) + " USD";
-
-  //available borrows
-  let availableBorrows = userData.availableBorrowsETH;
-  availableBorrows = availableBorrows.toString();
-  let availableBorrowsBN = new BN(availableBorrows);
-  availableBorrows = availableBorrowsBN.mul(ETHtoUSD);
-  availableBorrows = availableBorrows.toString();
-  AaveUser.availableBorrows = mod1ex(availableBorrows, 26);
-
-  //liquidation threshold
-  let liquidationThreshold = userData.currentLiquidationThreshold;
-  liquidationThreshold = liquidationThreshold.toString();
-  AaveUser.liquidationThreshold = mod1ex(liquidationThreshold, 2) + " %";
-
-  //ltv
-  let ltv = userData.ltv;
-  ltv = ltv.toString();
-  AaveUser.loanToValue = mod1ex(ltv, 2) + " %";
-
-  //health factor
-  AaveUser.healthFactor = mod1ex(userData.healthFactor.toString(), 18);
-
-  UserPosition.push(AaveUser);
-
-  for (let i = 0; i < 7; i++) {
-    let ReserveData = {};
-    //symbol
-    ReserveData.symbol = allTokens[i].symbol;
-
-    const TokenAddress = allTokens[i].tokenAddress.toString();
-    //supply rate
-    let currentLiquididityRate =
-      await resolveLendingPool.getCurrentLiquidityRate(TokenAddress);
-    currentLiquididityRate = currentLiquididityRate.toString();
-    currentLiquididityRate = mod1ex(currentLiquididityRate, 27);
-    ReserveData.supplyRate = currentLiquididityRate;
-
-    //bororw rate
-    let borrowRate = await resolveProtocolDataProvider.getReserveData(
-      TokenAddress
-    );
-    borrowRate = borrowRate.toString();
-    borrowRate = mod1ex(borrowRate, 27);
-    ReserveData.borrowRate = borrowRate;
-
-    //ltv
-    let reserveConfig =
-      await resolveProtocolDataProvider.getReserveConfigurationData(
-        TokenAddress
-      );
-    ReserveData.ltv = mod1ex(reserveConfig.ltv.toString(), 2);
-
-    //liquidation Threshold
-    ReserveData.liquidationThreshold = mod1ex(
-      reserveConfig.liquidationThreshold.toString(),
-      4
-    );
-
-    //price in ETH
-    let priceInETH = await resolvePriceOracle.getAssetPrice(TokenAddress);
-    priceInETH = priceInETH.toString();
-    ReserveData.priceInETH = mod1ex(priceInETH, 18);
-
-    //price in USD
-    priceInETH = new BN(priceInETH);
-    let priceInUSD = ETHtoUSD.mul(priceInETH);
-    priceInUSD = priceInUSD.toString();
-    ReserveData.priceInUSD = mod1ex(priceInUSD, 26);
-
-    //supply
-    let supplyborrow = await resolveProtocolDataProvider.getUserReserveData(
-      TokenAddress,
-      userAddress
-    );
-    let supply = supplyborrow.currentATokenBalance;
-    ReserveData.supply = mod1ex(supply.toString(), 18);
-
-    //borrow
-    let borrow = supplyborrow.currentVariableDebt;
-    ReserveData.borrrow = mod1ex(borrow.toString(), 18);
-
-    //max borrow limit
-    let ie6 = new BN("100000000000");
-    ReserveData.maxBorrowLimit = availableBorrowsBN
-      .div(priceInETH.div(ie6))
-      .toString();
-    ReserveData.maxBorrowLimit = mod1ex(ReserveData.maxBorrowLimit, 11);
-
-    //max liquidation borrow limit
-    let maxLiquidationBorrowLimit =
-      Number(ReserveData.supply) * Number(ReserveData.liquidationThreshold);
-    ReserveData.maxLiquidationBorrowLimit = maxLiquidationBorrowLimit;
-
-    UserPosition.push(ReserveData);
+  let userData = [];
+  const ud = await resolveUserPosition.getUserData(userAddress);
+  userData.totalSupply = mod1ex(ud.totalCollateralUSD.toString(),26)+' USD';
+  userData.totalBorrows = mod1ex(ud.totalDebtUSD.toString(),26)+' USD';
+  userData.availableBorrows = mod1ex(ud.availableBorrowsUSD.toString(),26)+' USD';
+  userData.ltv = mod1ex(ud.ltv.toString(),2)+' %';
+  userData.liquidationThreshold = mod1ex(ud.currentLiquidationThreshold.toString(),2)+' %';
+  userData.healthFactor = mod1ex(ud.healthFactor.toString(),18);
+  console.log(userData);
+  const allTokens = await resolveUserPosition.getAllReservesTokens();
+  for(let i=0;i<allTokens.length;i++)
+  {
+    let reserveData = [];
+    reserveData.symbol = allTokens[i].symbol;
+    const reserveAddress = allTokens[i].tokenAddress;
+    const reserveDataNonSpecific = await resolveUserPosition.dataSpecificToReserve(reserveAddress);
+    const reserveDataSpecific = await resolveUserPosition.getTokenDataSpecificToUser(reserveAddress,userAddress);
+    reserveData.supplyRate = mod1ex(reserveDataNonSpecific.supplyRate.toString(),27);
+    reserveData.borrowRate = mod1ex(reserveDataNonSpecific.borrowRate.toString(),27);
+    reserveData.ltv = mod1ex(reserveDataNonSpecific.ltv.toString(),2)+"%";
+    reserveData.liquidationThreshold = mod1ex(reserveDataNonSpecific.liquidationThreshold.toString(),4);
+    reserveData.priceInETH = mod1ex(reserveDataNonSpecific.priceInETH.toString(),18);
+    reserveData.priceInUSD = mod1ex(reserveDataNonSpecific.priceInUSD.toString(),26);
+    reserveData.supply = mod1ex(reserveDataSpecific.supply.toString(),18);
+    reserveData.borrow = mod1ex(reserveDataSpecific.borrow.toString(),18);
+    reserveData.maxBorrowLimit = mod1ex(reserveDataSpecific.maxBorrowLimit.toString(),10);
+    reserveData.maxLiquidationBorrowLimit = mod1ex(reserveDataSpecific.maxLiquidationBorrowLimit.toString(),14);
+    console.log(reserveData);
   }
-  console.log(UserPosition);
+  
+
+
 }
 
 GetUserPosition();
