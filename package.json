@@ -1,6 +1,7 @@
 {
   "name": "hardhat-project",
   "devDependencies": {
+    "@nomiclabs/buidler": "^1.4.8",
     "@nomiclabs/hardhat-ethers": "^2.0.4",
     "@nomiclabs/hardhat-waffle": "^2.0.2",
     "@nomiclabs/hardhat-web3": "^2.0.0",
@@ -11,6 +12,12 @@
     "web3": "^1.7.0"
   },
   "dependencies": {
+    "axios": "^0.25.0",
+    "bignumber.js": "^9.0.2",
+    "bn.js": "^4.12.0",
     "dotenv": "^16.0.0"
   }
 }
+
+
+
