@@ -18,22 +18,23 @@ async function GetUserPosition() {
 
   let userData = [];
   const ud = await resolveUserPosition.getUserData(userAddress);
-  userData.totalSupply = new BigNumber(ud.totalCollateralUSD.toString());
-  userData.totalSupply = userData.totalSupply.div(1e26) + " USD";
+  userData.totalSupply =
+    new BigNumber(ud.totalCollateralUSD.toString()).div(1e26) + " USD";
 
-  userData.totalBorrows = new BigNumber(ud.totalDebtUSD.toString());
-  userData.totalBorrows = userData.totalBorrows.div(1e26) + " USD";
+  userData.totalBorrows =
+    new BigNumber(ud.totalDebtUSD.toString()).div(1e26) + " USD";
 
-  userData.availableBorrows = new BigNumber(ud.availableBorrowsUSD.toString());
-  userData.availableBorrows = userData.availableBorrows.div(1e26) + " USD";
+  userData.availableBorrows =
+    new BigNumber(ud.availableBorrowsUSD.toString()).div(1e26) + " USD";
 
   userData.ltv = Number(ud.ltv) / 100 + " %";
 
   userData.liquidationThreshold =
     Number(ud.currentLiquidationThreshold) / 100 + " %";
 
-  userData.healthFactor = new BigNumber(ud.healthFactor.toString());
-  userData.healthFactor = userData.healthFactor.div(1e18).toString();
+  userData.healthFactor = new BigNumber(ud.healthFactor.toString())
+    .div(1e18)
+    .toString();
 
   console.log(userData);
 
@@ -53,13 +54,15 @@ async function GetUserPosition() {
 
     reserveData.supplyRate = new BigNumber(
       reserveDataNonSpecific.supplyRate.toString()
-    );
-    reserveData.supplyRate = reserveData.supplyRate.div(1e27).toString();
+    )
+      .div(1e27)
+      .toString();
 
     reserveData.borrowRate = new BigNumber(
       reserveDataNonSpecific.borrowRate.toString()
-    );
-    reserveData.borrowRate = reserveData.borrowRate.div(1e27).toString();
+    )
+      .div(1e27)
+      .toString();
 
     reserveData.ltv = Number(reserveDataNonSpecific.ltv) / 100 + "%";
 
@@ -68,32 +71,35 @@ async function GetUserPosition() {
 
     reserveData.priceInETH = new BigNumber(
       reserveDataNonSpecific.priceInETH.toString()
-    );
-    reserveData.priceInETH = reserveData.priceInETH.div(1e18).toString();
+    )
+      .div(1e18)
+      .toString();
 
     reserveData.priceInUSD = new BigNumber(
       reserveDataNonSpecific.priceInUSD.toString()
-    );
-    reserveData.priceInUSD = reserveData.priceInUSD.div(1e26).toString();
+    )
+      .div(1e26)
+      .toString();
 
-    reserveData.supply = new BigNumber(reserveDataSpecific.supply.toString());
-    reserveData.supply = reserveData.supply.div(1e18).toString();
+    reserveData.supply = new BigNumber(reserveDataSpecific.supply.toString())
+      .div(1e18)
+      .toString();
 
-    reserveData.borrow = new BigNumber(reserveDataSpecific.borrow.toString());
-    reserveData.borrow = reserveData.borrow.div(1e18).toString();
+    reserveData.borrow = new BigNumber(reserveDataSpecific.borrow.toString())
+      .div(1e18)
+      .toString();
 
     reserveData.maxBorrowLimit = new BigNumber(
       reserveDataSpecific.maxBorrowLimit.toString()
-    );
-    reserveData.maxBorrowLimit = reserveData.maxBorrowLimit
+    )
       .div(1e10)
       .toString();
 
     reserveData.maxLiquidationBorrowLimit = new BigNumber(
       reserveDataSpecific.maxLiquidationBorrowLimit.toString()
-    );
-    reserveData.maxLiquidationBorrowLimit =
-      reserveData.maxLiquidationBorrowLimit.div(1e14).toString();
+    )
+      .div(1e14)
+      .toString();
 
     console.log(reserveData);
   }
